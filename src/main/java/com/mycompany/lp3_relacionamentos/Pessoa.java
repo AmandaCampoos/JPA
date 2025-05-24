@@ -4,62 +4,104 @@
  */
 package com.mycompany.lp3_relacionamentos;
 
-import java.sql.SQLException;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
  * @author amand
+ *
  */
-public class PessoaDAO {
-    private EntityManager em;
+@Entity
+public class Pessoa implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
+    private Long id;
+    private String nome;
+    private String rg;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "endereco_id")
+    private Endereco endereco;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pessoa_id")
+    private List<Telefone> telefones = new ArrayList<>();
     
-    public PessoaDAO(EntityManager em) {
-        this.em = em;
+    public Long getId() {
+        return id;
     }
-    
-    public void inserir(Pessoa pessoa) {
-        try {
-            em.getTransaction().begin();
-            em.persist(pessoa);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Pessoa)) {
+            return false;
         }
-    }
-    
-    public void atualizar(Pessoa pessoa) {
-        try {
-            em.getTransaction().begin();
-            em.merge(pessoa);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
+        Pessoa other = (Pessoa) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
         }
+        return true;
     }
-    
-    public void remover(Pessoa pessoa) {
-        try {
-            em.getTransaction().begin();
-            em.remove(pessoa);
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-        }
+
+    @Override
+    public String toString() {
+        return "com.mycompany.lp3_relacionamentos.Pessoa[ id=" + id + " ]";
     }
-    
-    public Pessoa consultarPorId(int id) {
-        Query query = em.createQuery("select p from Pessoa p where p.id = :id");
-        query.setParameter("id", id);
-        return (Pessoa) query.getSingleResult();
+
+    public String getNome() {
+        return nome;
     }
-    
-    public List<Pessoa> consultarTodos() {
-        Query query = em.createQuery("select p from Pessoa p");
-        return query.getResultList();
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+
+    public List<Telefone> getTelefones() {
+        return telefones;
+    }
+
+    public void setTelefones(List<Telefone> telefones) {
+        this.telefones = telefones;
     }
     
 }
