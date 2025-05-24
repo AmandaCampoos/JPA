@@ -4,9 +4,11 @@
  */
 package com.mycompany.lp3_relacionamentos;
 
+import java.sql.SQLException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
 
 /**
  *
@@ -15,65 +17,49 @@ import javax.persistence.Query;
 public class PessoaDAO {
     private EntityManager em;
     
-    
-    public PessoaDAO(EntityManager em){
+    public PessoaDAO(EntityManager em) {
         this.em = em;
     }
     
-    public void inserir(Pessoa pessoa){
+    public void inserir(Pessoa pessoa) {
         try {
-            
             em.getTransaction().begin();
             em.persist(pessoa);
             em.getTransaction().commit();
-            
-                
-        }  catch (Exception e) {
-            
+        } catch (Exception e) {
             em.getTransaction().rollback();
         }
-      
     }
     
-      public void remover(Pessoa pessoa){
+    public void atualizar(Pessoa pessoa) {
         try {
-            
-            em.getTransaction().begin();
-            em.remove(pessoa);
-            em.getTransaction().commit();
-            
-                
-        }  catch (Exception e) {
-            
-            em.getTransaction().rollback();
-        }
-      
-    }
-      
-        public void atualizar (Pessoa pessoa){
-        try {
-            
             em.getTransaction().begin();
             em.merge(pessoa);
             em.getTransaction().commit();
-            
-                
-        }  catch (Exception e) {
-            
+        } catch (Exception e) {
             em.getTransaction().rollback();
         }
-      
     }
-        public Pessoa consultarPorId(int id){
-            Query query = em.createQuery("select p from Pessoa p where p.id = :id");
-              query.setParameter("id",id );
-              
-              return (Pessoa) query.getSingleResult();
+    
+    public void remover(Pessoa pessoa) {
+        try {
+            em.getTransaction().begin();
+            em.remove(pessoa);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
         }
-          
-        public List<Pessoa> consultarTodos(){
-            Query query = em.createNamedQuery("select p from Pessoa p");
-            return query.getResultList();
-            
-        }
+    }
+    
+    public Pessoa consultarPorId(int id) {
+        Query query = em.createQuery("select p from Pessoa p where p.id = :id");
+        query.setParameter("id", id);
+        return (Pessoa) query.getSingleResult();
+    }
+    
+    public List<Pessoa> consultarTodos() {
+        Query query = em.createQuery("select p from Pessoa p");
+        return query.getResultList();
+    }
+    
 }

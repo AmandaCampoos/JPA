@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+
 /**
  *
  * @author amand
@@ -15,65 +16,49 @@ import javax.persistence.Query;
 public class EnderecoDAO {
     private EntityManager em;
     
-    
-    public EnderecoDAO(EntityManager em){
+    public EnderecoDAO(EntityManager em) {
         this.em = em;
     }
     
-    public void inserir(Endereco endereco){
+    public void inserir(Endereco endereco) {
         try {
-            
             em.getTransaction().begin();
             em.persist(endereco);
             em.getTransaction().commit();
-            
-                
-        }  catch (Exception e) {
-            
+        } catch (Exception e) {
             em.getTransaction().rollback();
         }
-      
     }
     
-      public void remover(Endereco endereco){
+    public void atualizar(Endereco endereco) {
         try {
-            
-            em.getTransaction().begin();
-            em.remove(endereco);
-            em.getTransaction().commit();
-            
-                
-        }  catch (Exception e) {
-            
-            em.getTransaction().rollback();
-        }
-      
-    }
-      
-        public void atualizar (Endereco endereco){
-        try {
-            
             em.getTransaction().begin();
             em.merge(endereco);
             em.getTransaction().commit();
-            
-                
-        }  catch (Exception e) {
-            
+        } catch (Exception e) {
             em.getTransaction().rollback();
         }
-      
     }
-        public Endereco consultarPorId(int id){
-            Query query = em.createQuery("select p from Endereco p where p.id = :id");
-              query.setParameter("id",id );
-              
-              return (Endereco) query.getSingleResult();
+    
+    public void remover(Endereco endereco) {
+        try {
+            em.getTransaction().begin();
+            em.remove(endereco);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
         }
-          
-        public List<Endereco> consultarTodos(){
-            Query query = em.createNamedQuery("select p from Endereco p");
-            return query.getResultList();
-            
-        }
+    }
+    
+    public Endereco consultarPorId(int id) {
+        Query query = em.createQuery("select p from Endereco p where p.id = :id");
+        query.setParameter("id", id);
+        return (Endereco) query.getSingleResult();
+    }
+    
+    public List<Endereco> consultarTodos() {
+        Query query = em.createQuery("select p from Endereco p");
+        return query.getResultList();
+    }
+    
 }

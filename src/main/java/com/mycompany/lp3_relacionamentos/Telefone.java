@@ -9,20 +9,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  *
- * @author amand
+ * @author renato
  */
 @Entity
 public class Telefone implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String ddd;
     private String numero;
+    @ManyToOne
+    private Pessoa pessoa;
+    
     public Long getId() {
         return id;
     }
@@ -70,6 +74,14 @@ public class Telefone implements Serializable {
 
     public void setNumero(String numero) {
         this.numero = numero;
+    }
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
     
 }

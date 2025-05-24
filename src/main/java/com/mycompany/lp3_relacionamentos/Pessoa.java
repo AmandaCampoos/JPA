@@ -1,103 +1,65 @@
-
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.mycompany.lp3_relacionamentos;
 
-import java.io.Serializable;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 
 /**
  *
  * @author amand
  */
-//indica que a classe é uma entidade persistente.
-@Entity
-public class Pessoa implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-    @JoinColumn(name = "pessoa_id")
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String nome;
-   
-    private String rg;
-    //para criar um relacionamento entre as tabelas 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "endereco_id")
-    private Endereco endereco;
-    @OneToMany(cascade = CascadeType.ALL)
-   private List<Telefone> telefones = new ArrayList<>();
-    public Long getId() {
-        return id;
+public class PessoaDAO {
+    private EntityManager em;
+    
+    public PessoaDAO(EntityManager em) {
+        this.em = em;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Pessoa)) {
-            return false;
+    
+    public void inserir(Pessoa pessoa) {
+        try {
+            em.getTransaction().begin();
+            em.persist(pessoa);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
         }
-        Pessoa other = (Pessoa) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
+    }
+    
+    public void atualizar(Pessoa pessoa) {
+        try {
+            em.getTransaction().begin();
+            em.merge(pessoa);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
         }
-        return true;
     }
-
-    @Override
-    public String toString() {
-        return "com.mycompany.lp3_relacionamentos.Pessoa[ id=" + id + " ]";
+    
+    public void remover(Pessoa pessoa) {
+        try {
+            em.getTransaction().begin();
+            em.remove(pessoa);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+        }
     }
-
-    public String getNome() {
-        return nome;
+    
+    public Pessoa consultarPorId(int id) {
+        Query query = em.createQuery("select p from Pessoa p where p.id = :id");
+        query.setParameter("id", id);
+        return (Pessoa) query.getSingleResult();
     }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getRg() {
-        return rg;
-    }
-
-    public void setRg(String rg) {
-        this.rg = rg;
-    }
-
-    public Endereco getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco) {
-        this.endereco = endereco;
-    }
-
-    public List<Telefone> getTelefones() {
-        return telefones;
-    }
-
-    public void setTelefones(List<Telefone> telefones) {
-        this.telefones = telefones;
+    
+    public List<Pessoa> consultarTodos() {
+        Query query = em.createQuery("select p from Pessoa p");
+        return query.getResultList();
     }
     
 }
